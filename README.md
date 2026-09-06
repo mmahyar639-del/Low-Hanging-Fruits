@@ -149,6 +149,6 @@ Contributions are what make the open-source community such an amazing place to l
 Distributed under the MIT License. See `LICENSE` for more information.
 
 <div align="center">
-  <b>Built with ❤️ by the Cybersecurity Community</b>
+  <b>Built by the Cybersecurity Community</b>
 </div>
 
