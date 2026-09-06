@@ -1,0 +1,143 @@
+
+
+
+
+
+#!/bin/bash
+# ============================================
+# Low-Hanging Fruits (LHF) - Main Scanner
+# Phase 3, Step 2: Core Engine + Logging & Error Handling
+# ============================================
+
+set +H
+
+# ---------- Global Variables ----------
+LOG_FILE=""
+SCAN_DIR=""
+
+# ---------- Colors ----------
+R='\e[1;31m'; G='\e[1;32m'; Y='\e[1;33m'
+C='\e[1;36m'; B='\e[1;34m'; M='\e[1;35m'; N='\e[0m'
+
+# ---------- Banner Function ----------
+print_banner() {
+    local target=$1
+    echo -e "${M}"
+    echo "  _     ____    ____  _  __       _____ _   _ _____ "
+    echo " | |   |  _ \  / ___|| |/ /      |  ___| | | |_   _|"
+    echo " | |   | | | | \___ \| ' /  _____| |_  | | | | | |  "
+    echo " | |___| |_| |  ___) | . \ |_____|  _| | |_| | | |  "
+    echo " |_____|____/  |____/|_|\_\      |_|    \___/  |_|  "
+    echo -e "${N}"
+    echo -e "${C}  Low-Hanging Fruits - Automated Bug Bounty Recon${N}"
+    echo -e "${Y}  Target: ${B}${target}${N}"
+    echo ""
+}
+
+# ---------- Logging Function ----------
+log() {
+    local level=$1
+    local msg=$2
+    local timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+    local formatted_msg="[${timestamp}] [${level}] ${msg}"
+    
+    # 1. چاپ در ترمینال با رنگ
+    case $level in
+        "INFO")  echo -e "${G}[+]${N} ${msg}" ;;
+        "WARN")  echo -e "${Y}[!]${N} ${msg}" ;;
+        "ERROR") echo -e "${R}[✗]${N} ${msg}" ;;
+        "STEP")  echo -e "${B}[*]${N} ${msg}" ;;
+        "SUCCESS") echo -e "${M}[✓]${N} ${msg}" ;;
+    esac
+    
+    # 2. ذخیره در فایل لاگ (بدون کدهای رنگی برای خوانایی بهتر)
+    if [ -n "$LOG_FILE" ]; then
+        echo "$formatted_msg" >> "$LOG_FILE"
+    fi
+}
+
+# ---------- Cleanup Function (Triggered on Exit/Interrupt) ----------
+cleanup() {
+    log "WARN" "Script interrupted or finished! Running cleanup..."
+    # در آینده: حذف فایل‌های موقت، بستن پروسه‌های پس‌زمینه و غیره
+    # rm -rf "$SCAN_DIR/tmp/"
+    
+    if [ -n "$SCAN_DIR" ]; then
+        log "INFO" "Partial results are safely saved in: $SCAN_DIR"
+    fi
+    log "INFO" "Cleanup complete. Exiting gracefully."
+    exit 0
+}
+
+# ---------- Load Configuration Function ----------
+load_config() {
+    local config_path="$HOME/lhf/config.conf"
+    if [ -f "$config_path" ]; then
+        source "$config_path"
+        log "SUCCESS" "Configuration loaded from $config_path"
+    else
+        log "ERROR" "config.conf not found at $config_path"
+        log "ERROR" "Please run Phase 1 setup first."
+        exit 1
+    fi
+}
+
+# ---------- Setup Scan Directory Function ----------
+setup_scan_dir() {
+    local target=$1
+    local timestamp=$(date +"%Y%m%d_%H%M%S")
+    
+    # امن‌سازی نام دامنه
+    local safe_target=$(echo "$target" | sed 's/[^a-zA-Z0-9._-]/_/g')
+    
+    # ساخت مسیر یکتای اسکن
+    SCAN_DIR="$LHF_HOME/scans/${safe_target}_${timestamp}"
+    
+    # ساخت زیرپوشه‌ها
+    mkdir -p "$SCAN_DIR"/{subs,ports,http,urls,vulns,secrets,screenshots,takeover,reports,tmp}
+    
+    # مقداردهی اولیه فایل لاگ
+    LOG_FILE="$SCAN_DIR/execution.log"
+    touch "$LOG_FILE"
+    
+    log "SUCCESS" "Scan directory created: $SCAN_DIR"
+    log "INFO" "Log file initialized at: $LOG_FILE"
+    
+    # ذخیره مسیر آخرین اسکن
+    echo "$SCAN_DIR" > "$LHF_HOME/tmp/last_scan_dir.txt"
+}
+
+# ---------- Main Logic Function ----------
+main() {
+    # ۱. بررسی ورودی‌ها
+    if [ -z "$1" ]; then
+        echo -e "${R}[✗] Error: No target specified.${N}"
+        echo -e "${Y}Usage: $0 <target.com>${N}"
+        exit 1
+    fi
+    
+    TARGET="$1"
+    
+    # ۲. تنظیم Trap برای مدیریت قطع شدن (Ctrl+C)
+    # SIGINT: Interrupt (Ctrl+C) | SIGTERM: Termination signal
+    trap cleanup SIGINT SIGTERM
+    
+    # ۳. اجرای مراحل راه‌اندازی
+    print_banner "$TARGET"
+    load_config
+    setup_scan_dir "$TARGET"
+    
+    # ۴. نمایش خلاصه وضعیت موتور (این هم در ترمینال و هم در لاگ ثبت می‌شود)
+    echo ""
+    log "STEP" "Engine initialized successfully."
+    log "INFO" "Target:  $TARGET"
+    log "INFO" "Profile: $PROFILE"
+    log "INFO" "Threads: $THREADS"
+    log "INFO" "Output:  $SCAN_DIR"
+    echo ""
+    log "SUCCESS" "Phase 3, Step 2 completed. Logging system is active."
+    log "INFO" "Next steps will add the actual scanning logic."
+}
+
+# اجرای تابع اصلی
+main "$@"
