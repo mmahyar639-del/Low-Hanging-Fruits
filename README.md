@@ -50,7 +50,8 @@ By intelligently chaining together the best tools in the modern Go-based securit
 
 ## 🚀 Installation
 
-Clone the repository and run the setup scripts to build your environment:
+Clone the repository and run the unified installation script. It will automatically install Go, all required tools, and set up the default configuration.
+
 
 ```bash
 # 1. Clone the repository
@@ -58,7 +59,8 @@ git clone https://github.com/YOUR_USERNAME/Low-Hanging-Fruits.git
 cd Low-Hanging-Fruits
 
 # 2. Grant execution permissions
-chmod +x *.sh
+chmod +x install.sh bb-scan.sh
+./install.sh
 
 # 3. Run the foundation and setup scripts sequentially
 ./Foundation.sh
