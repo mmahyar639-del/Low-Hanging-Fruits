@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================
-# LHF - Automated Installation Script
+# LHF - Automated Installation Script (v1.1 Fixed)
 # ============================================
 
 echo -e "\e[1;34m[+] Starting Low-Hanging Fruits (LHF) Installation...\e[0m"
@@ -14,12 +14,19 @@ if ! command -v go &> /dev/null; then
     echo -e "\e[1;33m[*] Installing Go language...\e[0m"
     wget -q https://go.dev/dl/go1.21.0.linux-amd64.tar.gz
     sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.21.0.linux-amd64.tar.gz
+    
+    # افزودن به bashrc برای نشست‌های آینده
     echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
-    echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.bashrc
-    source ~/.bashrc
+    echo 'export PATH=$PATH:$HOME/go/bin' >> ~/.bashrc
+    
+    # فعال‌سازی فوری مسیر برای همین اسکریپت (رفع باگ قبلی)
+    export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin
+    
     rm -f go1.21.0.linux-amd64.tar.gz
 else
     echo -e "\e[1;32m[✓] Go is already installed.\e[0m"
+    # اطمینان از فعال بودن مسیر حتی اگر از قبل نصب بوده
+    export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin
 fi
 
 # 3. Install Security Tools via Go
