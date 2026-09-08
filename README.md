@@ -56,7 +56,7 @@ Clone the repository and run the unified installation script. It will automatica
 ```bash
 # 1. Clone the repository
 git clone https://github.com/mmahyar639-del/Low-Hanging-Fruits.git
-cd Low-Hanging-Fruits
+cd lhf
 
 # 2. Grant execution permissions
 chmod +x install.sh bb-scan.sh
