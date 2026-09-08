@@ -11,7 +11,7 @@ set +H
 LOG_FILE=""
 SCAN_DIR=""
 CLEAN_TARGET=""
-LHF_HOME="$HOME/lhf"
+LHF_HOME="$HOME/Low-Hanging-Fruits"
 
 # ---------- Colors ----------
 R='\e[1;31m'; G='\e[1;32m'; Y='\e[1;33m'
@@ -63,14 +63,14 @@ show_help() {
     echo -e "${B}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${N}"
     echo -e "${B}BACKGROUND MODE:${N}"
     echo -e "  ${C}•${N} Use ${Y}-b${N} flag for long scans on VPS"
-    echo -e "  ${C}•${N} Check progress: ${Y}tail -f ~/lhf/logs/lhf_<target>_background.log${N}"
-    echo -e "  ${C}•${N} Stop scan: ${Y}kill \$(cat ~/lhf/tmp/lhf_<target>.pid)${N}"
+    echo -e "  ${C}•${N} Check progress: ${Y}tail -f ~/Low-Hanging-Fruits/logs/lhf_<target>_background.log${N}"
+    echo -e "  ${C}•${N} Stop scan: ${Y}kill \$(cat ~/Low-Hanging-Fruits/tmp/lhf_<target>.pid)${N}"
     echo ""
     echo -e "${B}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${N}"
     echo -e "${B}OUTPUT DIRECTORIES:${N}"
-    echo -e "  ${C}•${N} Results: ${Y}~/lhf/scans/<target>_<timestamp>/${N}"
-    echo -e "  ${C}•${N} Reports: ${Y}~/lhf/scans/<target>_<timestamp>/reports/${N}"
-    echo -e "  ${C}•${N} Logs: ${Y}~/lhf/logs/${N}"
+    echo -e "  ${C}•${N} Results: ${Y}~/Low-Hanging-Fruits/scans/<target>_<timestamp>/${N}"
+    echo -e "  ${C}•${N} Reports: ${Y}~/Low-Hanging-Fruits/scans/<target>_<timestamp>/reports/${N}"
+    echo -e "  ${C}•${N} Logs: ${Y}~/Low-Hanging-Fruits/logs/${N}"
     echo ""
     exit 0
 }
@@ -443,6 +443,7 @@ main() {
         CLEAN_TARGET=$(echo "$TARGET" | sed -e 's|^http[s]*://||' -e 's|^www\.||' -e 's|/.*||')
         BG_LOG_FILE="$LHF_HOME/logs/lhf_${CLEAN_TARGET}_background.log"
         mkdir -p "$LHF_HOME/logs"
+        mkdir -p "$LHF_HOME/tmp"
         
         print_banner "$TARGET"
         echo -e "${Y}[*] Starting LHF in background mode...${N}"
